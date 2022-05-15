@@ -58,6 +58,12 @@ class PQueue {
 // To be completed below
 
 
+
+template <typename T, typename C>
+bool PQueue<T, C>::CompareNodes(size_t i, size_t j) {
+  return cmp(items[i], items[j]);
+}
+
 template <typename T, typename C>
 size_t PQueue<T, C>::Size() {
   return cur_size;
@@ -70,21 +76,21 @@ T& PQueue<T, C>::Top() {
   return items[Root()];
 }
 
-
 template <typename T, typename C>
 void PQueue<T, C>::PercolateUp(size_t n) {
-  while (HasParent(n) && !cmp(items[Parent(n), items[n]])) {
+  while (HasParent(n) && CompareNodes(n, Parent(n))) {
     std::swap(items[Parent(n)], items[n]);
-    n = Parent(n);
+   // n = Parent(n); // not sure what this line is doing
   }
 }
 
 template <typename T, typename C>
 void PQueue<T, C>::Push(const T &item) {
   // Insert at the end
-  items[++cur_size] = std::move(item);
+  items.emplace_back(item);
+  cur_size++;
   // Percolate up
-  PercolateUp(cur_size);
+  PercolateUp(Size()-1);
 }
 
 template <typename T, typename C>
@@ -94,11 +100,11 @@ void PQueue<T, C>::PercolateDown(size_t n) {
     // Consider left child by default
     size_t child = LeftChild(n);
     // If right child exists and smaller than left child, then consider right child
-    if (IsNode(RightChild(n)) && cmp(items[RightChild(n)], items[LeftChild(n)]))
+    if (IsNode(RightChild(n)) && CompareNodes(RightChild(n), LeftChild(n)))
       child = RightChild(n);
     
     // Exchange smallest child with node to restore heap-order if necessary
-    if (cmp(items[child], items[n]))
+    if (CompareNodes(child, n))
       std::swap(items[child], items[n]);
     else
       break;
@@ -114,7 +120,9 @@ void PQueue<T, C>::Pop() {
     throw std::underflow_error("Empty priority queue!");
   
   // Move last item back to root and reduce heap's size
-  items[Root()] = std::move(items[cur_size--]);
+  items[Root()] = items[Size()-1];
+  items.pop_back();
+  cur_size--;
   PercolateDown(Root());
 }
 
