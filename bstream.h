@@ -54,27 +54,22 @@ bool BinaryInputStream::GetBit() {
 
 char BinaryInputStream::GetChar() {
   // To be completed
-  bool bit = 0;
-  std::bitset<8> b;
-  char c;
+  char c = 0;
 
-  for (auto i = 0; i < 8; i++) {
-    bit = ((buffer << 1) | GetBit()) == 1;
-    b[i] = bit;
+  for (int i = 0; i < 8; ++i) {
+    c |= GetBit() << (7-i);
   }
-  c = b.count();
   return c;
 }
 
 int BinaryInputStream::GetInt() {
   // To be completed
-  int int_;
+  int int_ = 0;
+  
+  for (int i = 0; i < 32; ++i) {
+    int_ |= GetBit() << (31-i);
+  }
 
-  if (!avail)
-    RefillBuffer();
-
-  avail--;
-  int_ = ((buffer << avail) & 1) == 1;
   return int_;
 }
 
@@ -138,10 +133,16 @@ void BinaryOutputStream::PutBit(bool bit) {
 
 void BinaryOutputStream::PutChar(char byte) {
   // To be completed
+  for (int i = 0; i < 8; ++i) {
+    PutBit(byte >> (7-i) & 1);
+  }
 }
 
 void BinaryOutputStream::PutInt(int word) {
   // To be completed
+  for (int i = 0; i < 32; ++i) {
+    PutBit(word >> (31-i) & 1);
+  }
 }
 
 #endif  // BSTREAM_H_
