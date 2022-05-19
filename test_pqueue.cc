@@ -56,12 +56,16 @@ TEST(PQueue, custom_class) {
   EXPECT_EQ(pq.Top().n(), vec[1].n());
 }
 
-#if 0
+#if 1
+struct MyClassPtrComp {
+  bool operator ()(MyClass* const& p1, MyClass* const& p2) { return *p1 < *p2;}
+};
+
 TEST(PQueue, custom_class_pointer) {
   std::vector<MyClass*> vec{new MyClass(42), new MyClass(23),
                             new MyClass(2), new MyClass(34)};
 
-  PQueue<MyClass*, /* ??? */> pq;
+  PQueue<MyClass*, MyClassPtrComp> pq;
   pq.Push(vec[0]);
   pq.Push(vec[1]);
   pq.Push(vec[2]);
