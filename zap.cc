@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
+
 #include "huffman.h"
+#include <array>
 
 int main(int argc, char** argv) {
   if (argc != 3) {
